@@ -60,7 +60,7 @@ public:
         LOG(INFO) << "Received request[log_id=" << cntl->log_id() 
                   << "] from " << cntl->remote_side() 
                   << " to " << cntl->local_side()
-                  << ": " << request->message()
+                  << ": length(" << request->message().length() << ")"
                   << " (attached=" << cntl->request_attachment() << ")";
 
         // Fill response.
@@ -86,8 +86,8 @@ public:
         std::string res_str;
         json2pb::ProtoMessageToJson(*req, &req_str, NULL);
         json2pb::ProtoMessageToJson(*res, &res_str, NULL);
-        LOG(INFO) << "req:" << req_str
-                    << " res:" << res_str;
+        LOG(INFO) << "req: length(" << req_str.length() << ")"
+                    << " res: length(" << res_str.length() << ")";
     }
 };
 }  // namespace example

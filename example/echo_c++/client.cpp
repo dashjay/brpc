@@ -57,14 +57,18 @@ int main(int argc, char* argv[]) {
 
     // Send a request and wait for the response every 1 second.
     int log_id = 0;
+    const size_t length = 8 * 1024 * 1024; // 8M
+    std::string longString;
+    for (size_t i = 0; i < length; ++i) {
+        longString += 'a';
+    }
     while (!brpc::IsAskedToQuit()) {
         // We will receive response synchronously, safe to put variables
         // on stack.
         example::EchoRequest request;
         example::EchoResponse response;
         brpc::Controller cntl;
-
-        request.set_message("hello world");
+        request.set_message(longString);
 
         cntl.set_log_id(log_id ++);  // set by user
         // Set attachment which is wired to network directly instead of 
@@ -77,7 +81,7 @@ int main(int argc, char* argv[]) {
         if (!cntl.Failed()) {
             LOG(INFO) << "Received response from " << cntl.remote_side()
                 << " to " << cntl.local_side()
-                << ": " << response.message() << " (attached="
+                << ": length(" << response.message().length() << ")" << " (attached="
                 << cntl.response_attachment() << ")"
                 << " latency=" << cntl.latency_us() << "us";
         } else {
